@@ -42,7 +42,7 @@ provider "kubernetes" {
 
 resource "kubernetes_deployment" "custom-site" {
   metadata {
-    name = "custom-site-deployment"
+    name = "${random_pet.name.id}-custom-site-deployment"
     labels = {
       app = "custom-site"
     }
@@ -66,7 +66,7 @@ resource "kubernetes_deployment" "custom-site" {
 
       spec {
         container {
-          name  = "custom-site"
+          name  = "custom-site-container"
           image = "openheineken/my-custom-site:latest"
 
           port {
@@ -80,7 +80,7 @@ resource "kubernetes_deployment" "custom-site" {
 
 resource "kubernetes_service" "custom-site" {
   metadata {
-    name = "custom-site-service"
+    name = kubernetes_deployment.custom-site.name
   }
 
   spec {
