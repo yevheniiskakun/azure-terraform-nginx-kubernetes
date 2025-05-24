@@ -67,7 +67,7 @@ resource "kubernetes_deployment" "custom-site" {
       spec {
         container {
           name  = "custom-site-container"
-          image = "openheineken/my-custom-site:latest"
+          image = "openheineken/simple-site:latest"
 
           port {
             container_port = 80
