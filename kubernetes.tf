@@ -12,7 +12,9 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   location            = var.location
   resource_group_name = azurerm_resource_group.nginx-rg.name
   dns_prefix          = "nginxaks1"
-  node_resource_group = "${random_pet.name.id}-aks-nodes"
+  
+  # Modifing default name "MC_<resource_group>_<cluster_name>_<location>" of additional RG created automatically to manage unerlying infrastucture 
+  node_resource_group = "${random_pet.name.id}-aks-nodes" 
 
   default_node_pool {
     name       = "default"
