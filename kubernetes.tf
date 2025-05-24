@@ -12,7 +12,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   location            = var.location
   resource_group_name = azurerm_resource_group.nginx-rg.name
   dns_prefix          = "nginxaks1"
-  
+
   # Modifing default name "MC_<resource_group>_<cluster_name>_<location>" of additional RG created automatically to manage unerlying infrastucture 
   node_resource_group = "${random_pet.name.id}-aks-nodes" 
 
@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "nginx" {
   }
 
   spec {
-    replicas = 4
+    replicas = 3
 
     selector {
       match_labels = {
