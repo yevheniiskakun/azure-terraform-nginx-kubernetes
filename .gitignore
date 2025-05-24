@@ -31,3 +31,6 @@ override.tf.json
 # Sensitive variable files
 *.tfvars
 *.tfvars.json
+
+# Environment file
+.envrc
