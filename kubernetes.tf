@@ -80,7 +80,7 @@ resource "kubernetes_deployment" "custom-site" {
 
 resource "kubernetes_service" "custom-site" {
   metadata {
-    name = kubernetes_deployment.custom-site.name
+    name = "${random_pet.name.id}-custom-site-service"
   }
 
   spec {
