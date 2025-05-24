@@ -2,7 +2,7 @@ resource "random_pet" "name" {
 
 }
 
-resource "azurerm_resource_group" "nginx-rg" {
+resource "azurerm_resource_group" "custom-site-rg" {
   name     = "${random_pet.name.id}-rg"
   location = var.location
 }
@@ -10,8 +10,8 @@ resource "azurerm_resource_group" "nginx-rg" {
 resource "azurerm_kubernetes_cluster" "cluster" {
   name                = "${random_pet.name.id}-aks"
   location            = var.location
-  resource_group_name = azurerm_resource_group.nginx-rg.name
-  dns_prefix          = "nginxaks1"
+  resource_group_name = azurerm_resource_group.custom-site-rg.name
+  dns_prefix          = "${random_pet.name.id}-dns"
 
   # Modifing default name "MC_<resource_group>_<cluster_name>_<location>" of additional RG created automatically to manage unerlying infrastucture 
   node_resource_group = "${random_pet.name.id}-aks-nodes" 
@@ -40,11 +40,11 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.cluster.kube_config.0.cluster_ca_certificate)
 }
 
-resource "kubernetes_deployment" "nginx" {
+resource "kubernetes_deployment" "custom-site" {
   metadata {
-    name = "nginx-deployment"
+    name = "custom-site-deployment"
     labels = {
-      app = "nginx"
+      app = "custom-site"
     }
   }
 
@@ -53,21 +53,21 @@ resource "kubernetes_deployment" "nginx" {
 
     selector {
       match_labels = {
-        app = "nginx"
+        app = "custom-site"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "nginx"
+          app = "custom-site"
         }
       }
 
       spec {
         container {
-          image = "nginx:latest"
-          name  = "nginx"
+          name  = "custom-site"
+          image = "openheineken/my-custom-site:latest"
 
           port {
             container_port = 80
@@ -78,14 +78,14 @@ resource "kubernetes_deployment" "nginx" {
   }
 }
 
-resource "kubernetes_service" "nginx" {
+resource "kubernetes_service" "custom-site" {
   metadata {
-    name = "nginx-service"
+    name = "custom-site-service"
   }
 
   spec {
     selector = {
-      app = kubernetes_deployment.nginx.metadata[0].labels.app
+      app = kubernetes_deployment.custom-site.metadata[0].labels.app
     }
 
     port {
